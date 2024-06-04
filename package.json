@@ -1,0 +1,20 @@
+{
+  "name": "test-mercado-pago",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "seba",
+  "license": "ISC",
+  "description": "Aplicación de escritorio con integración de MercadoPago Point",
+  "devDependencies": {
+    "electron": "^30.0.9"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mercadopago": "^2.0.9"
+  }
+}
