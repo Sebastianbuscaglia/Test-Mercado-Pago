@@ -1,57 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>MercadoPago Point Integration</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado Pago Integration</title>
 </head>
 <body>
-  <h1>Hola, MercadoPago Point!</h1>
+    <h1>Mercado Pago Integration</h1>
 
-  <h2>Crear una preferencia de pago</h2>
-  <form id="payment-form">
-    <label for="title">Título:</label>
-    <input type="text" id="title" name="title" required><br><br>
-    <label for="price">Precio:</label>
-    <input type="number" id="price" name="price" required><br><br>
-    <button type="submit">Crear Preferencia</button>
-  </form>
+    <form id="payment-form">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" required>
+        <button type="submit">Create Preference</button>
+    </form>
 
-  <h2>Obtener dispositivos POS</h2>
-  <button id="get-pos-devices">Obtener Dispositivos POS</button>
-  <ul id="pos-devices-list"></ul>
+    <button id="get-devices">Get Devices</button>
 
-  <script>
-    document.getElementById('payment-form').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const title = document.getElementById('title').value;
-      const price = document.getElementById('price').value;
+    <script>
+        document.getElementById('payment-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const title = document.getElementById('title').value;
+            const price = document.getElementById('price').value;
 
-      const response = await fetch('/create_preference', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ title, price })
-      });
+            try {
+                const response = await fetch('http://localhost:3000/create_preference', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title, price })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
 
-      const data = await response.json();
-      alert(`Preferencia creada con ID: ${data.id}`);
-      // Puedes redirigir al usuario al init_point para completar el pago
-      window.location.href = data.init_point;
-    });
+                const data = await response.json();
+                console.log('Preference created:', data);
+                // Puedes hacer algo con los datos aquí, como mostrar el init_point al usuario
+            } catch (error) {
+                console.error('Error creating preference:', error);
+            }
+        });
 
-    document.getElementById('get-pos-devices').addEventListener('click', async () => {
-      const response = await fetch('/pos_devices');
-      const data = await response.json();
+        document.getElementById('get-devices').addEventListener('click', async () => {
+            try {
+                const response = await fetch('http://localhost:3000/devices', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-      const posDevicesList = document.getElementById('pos-devices-list');
-      posDevicesList.innerHTML = '';
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
 
-      data.results.forEach(device => {
-        const li = document.createElement('li');
-        li.textContent = `ID: ${device.id}, Nombre: ${device.name}`;
-        posDevicesList.appendChild(li);
-      });
-    });
-  </script>
+                const data = await response.json();
+                console.log('Devices:', data);
+                // Puedes hacer algo con los datos aquí, como mostrarlos en la página
+            } catch (error) {
+                console.error('Error fetching devices:', error);
+            }
+        });
+    </script>
 </body>
 </html>
